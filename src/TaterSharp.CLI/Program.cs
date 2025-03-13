@@ -9,7 +9,7 @@ class Program
 {
     static readonly HttpClient client = new HttpClient();
     static readonly string APIHOST = "https://api.starch.one";
-    static readonly string COMPANY_ID = "868C0C";
+    static readonly string COMPANY_ID = "EDD336";
     static readonly string COLOR = $"#{COMPANY_ID}";
 
     static async Task<CompanyEmployeesResponse> GetCompanyEmployees()
@@ -88,13 +88,21 @@ class Program
 
     static async Task Mine()
     {
+        System.Console.WriteLine($"-------------------");
         var lastBlock = await GetLastBlock();
         if (lastBlock is null)
         {
+            Console.WriteLine($"Couldn't get last block info...");
             return;
         }
 
         var companyEmployees = await GetCompanyEmployees();
+
+        if (companyEmployees.Members.Count == 0)
+        {
+            Console.WriteLine($"Company {COMPANY_ID} doesn't have any employees - sleeping and trying again later");
+            return;
+        }
 
         var blocksSubmissionRequest = new BlocksSubmissionRequest();
 
@@ -103,7 +111,7 @@ class Program
             blocksSubmissionRequest.Blocks.Add(Solve(miner, lastBlock));
         }
 
-        System.Console.WriteLine($"-------------------");
+
         System.Console.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} * Submitting blocks for {companyEmployees.Members.Count} miners in company {COMPANY_ID}...");
         var response = await SubmitBlocks(blocksSubmissionRequest);
 
