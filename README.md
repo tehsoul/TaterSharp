@@ -1,5 +1,5 @@
 # TaterSharp
-Simplistic port of TaterSharpMini to a C# console application 
+Simplistic port of PyTaterMini to a C# console application 
 
 note that 80% of current code is ported by an LLM
 
