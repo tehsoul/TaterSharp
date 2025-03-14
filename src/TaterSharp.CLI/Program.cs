@@ -1,4 +1,5 @@
-﻿using TaterSharp.CLI.Models;
+﻿using System.Diagnostics;
+using TaterSharp.CLI.Models;
 
 namespace TaterSharp.CLI;
 
@@ -34,10 +35,10 @@ class Program
     static async Task Mine(string companyId)
     {
         Console.WriteLine($"-------------------");
-        var lastBlock = await Api.GetLastBlock();
-        if (lastBlock is null)
+        var lastHashResponse = await Api.GetLastHash();
+        if (lastHashResponse is null)
         {
-            Console.WriteLine($"Couldn't get last block info...");
+            Console.WriteLine($"Couldn't get last hash info...");
             return;
         }
 
@@ -53,7 +54,7 @@ class Program
 
         foreach (string miner in companyEmployees.Members)
         {
-            blocksSubmissionRequest.Blocks.Add(Solver.Solve(companyId, miner, lastBlock));
+            blocksSubmissionRequest.Blocks.Add(Solver.Solve(companyId, miner, lastHashResponse.Hash));
         }
 
 

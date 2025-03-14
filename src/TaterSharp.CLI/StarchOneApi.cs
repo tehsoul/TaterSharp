@@ -26,6 +26,20 @@ public class StarchOneApi
             return new CompanyEmployeesResponse();
         }
     }
+   
+    public async Task<LastHashResponse?> GetLastHash()
+    {
+        try
+        {
+            string response = await _client.GetStringAsync($"{API_HOST}/blockchain/last_hash");
+            return JsonSerializer.Deserialize<LastHashResponse>(response);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+    }
 
     public async Task<BlockInfoResponse?> GetLastBlock()
     {
@@ -41,7 +55,7 @@ public class StarchOneApi
         }
     }
 
-    
+
 
     public async Task<Dictionary<string, BlocksSubmissionResponse>> SubmitBlocks(BlocksSubmissionRequest request)
     {
