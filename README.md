@@ -1,8 +1,10 @@
 # TaterSharp
-Simplistic port of PyTaterMini to a C# console application 
+Started out as a port of PyTaterMini to a C# console application 
 
-note that 80% of current code is ported by an LLM
+Extra features compared to PyTaterMini:
+- possibility to mine for multiple companies at once
+- pretty output
 
-Might or might not continue on this to make it prettier
+taking $STARCH donations at $tehsoul
 
 ![screenshot of initial version](docs/img/screenshot.png)
