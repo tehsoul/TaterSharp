@@ -1,4 +1,4 @@
-# TaterSharp
+# 🥔 TaterSharp 🥔
 Started out as a port of [PyTaterMini](https://github.com/StarchIndustries/PyTaterMini) to a C# console application 
 
 Extra features compared to PyTaterMini:
@@ -9,5 +9,5 @@ taking $STARCH donations at $tehsoul
 
 ![screenshot of initial version](docs/img/screenshot.png)
 
-## References
+## 📖 References
 api.starch.one docs: [API Docs](docs/API.md)
