@@ -8,3 +8,6 @@ Extra features compared to PyTaterMini:
 taking $STARCH donations at $tehsoul
 
 ![screenshot of initial version](docs/img/screenshot.png)
+
+## References
+api.starch.one docs: [API Docs](docs/API.md)

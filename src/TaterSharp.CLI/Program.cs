@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using Spectre.Console;
-using TaterSharp.CLI.Models;
+﻿using Spectre.Console;
+using TaterSharp.CLI.ApiModels;
 
 namespace TaterSharp.CLI;
 
@@ -15,7 +14,7 @@ class Program
         AnsiConsole.Write(
             new FigletText("TaterSharp")
                 .Centered()
-                .Color(System.ConsoleColor.Yellow));
+                .Color(ConsoleColor.Yellow));
 
         AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", CompanyIdsToMine)}[/]"));
         AnsiConsole.WriteLine();
@@ -36,7 +35,7 @@ class Program
                 }
             }
             AnsiConsole.Status()
-                .Start($"Sleeping for {SleepDelayInSeconds} seconds...", ctx =>
+                .Start($"Sleeping for {SleepDelayInSeconds} seconds...", _ =>
                 {
                     Thread.Sleep(TimeSpan.FromSeconds(SleepDelayInSeconds)); // Sleep for 45 seconds
                 });

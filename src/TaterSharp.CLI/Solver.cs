@@ -1,4 +1,4 @@
-﻿using TaterSharp.CLI.Models;
+﻿using TaterSharp.CLI.ApiModels;
 
 namespace TaterSharp.CLI;
 public static class Solver

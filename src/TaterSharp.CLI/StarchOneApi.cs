@@ -1,15 +1,12 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Spectre.Console;
-using Spectre.Console.Json;
-
-using TaterSharp.CLI.Models;
+using TaterSharp.CLI.ApiModels;
 
 namespace TaterSharp.CLI;
 public class StarchOneApi
 {
     private readonly HttpClient _client;
-    private const string API_HOST = "https://api.starch.one";
+    private const string ApiHost = "https://api.starch.one";
 
     public StarchOneApi(HttpClient client)
     {
@@ -20,7 +17,7 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"{API_HOST}/teams/{companyId}/members");
+            string response = await _client.GetStringAsync($"{ApiHost}/teams/{companyId}/members");
             return JsonSerializer.Deserialize<CompanyEmployeesResponse>(response) ?? new CompanyEmployeesResponse();
         }
         catch (Exception e)
@@ -34,7 +31,7 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"{API_HOST}/blockchain/last_hash");
+            string response = await _client.GetStringAsync($"{ApiHost}/blockchain/last_hash");
             return JsonSerializer.Deserialize<LastHashResponse>(response);
         }
         catch (Exception e)
@@ -48,7 +45,7 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"{API_HOST}/blockchain/last_block");
+            string response = await _client.GetStringAsync($"{ApiHost}/blockchain/last_block");
             return JsonSerializer.Deserialize<BlockInfoResponse>(response);
         }
         catch (Exception e)
@@ -67,7 +64,7 @@ public class StarchOneApi
             var json = JsonSerializer.Serialize(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _client.PostAsync($"{API_HOST}/submit_blocks", content);
+            HttpResponseMessage response = await _client.PostAsync($"{ApiHost}/submit_blocks", content);
             string responseString = await response.Content.ReadAsStringAsync();
 
             //var jsonLog = new JsonText(json);
@@ -78,7 +75,7 @@ public class StarchOneApi
             //        .RoundedBorder()
             //        .BorderColor(Color.Yellow));
 
-            return JsonSerializer.Deserialize<Dictionary<string, BlocksSubmissionResponse>>(responseString);
+            return JsonSerializer.Deserialize<Dictionary<string, BlocksSubmissionResponse>>(responseString) ?? new Dictionary<string, BlocksSubmissionResponse>();
         }
         catch (Exception e)
         {

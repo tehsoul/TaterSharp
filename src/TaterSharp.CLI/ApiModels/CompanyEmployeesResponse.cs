@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaterSharp.CLI.Models;
+namespace TaterSharp.CLI.ApiModels;
 
 public class CompanyEmployeesResponse
 {
