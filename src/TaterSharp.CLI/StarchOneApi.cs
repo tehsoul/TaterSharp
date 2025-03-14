@@ -1,5 +1,8 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Spectre.Console;
+using Spectre.Console.Json;
+
 using TaterSharp.CLI.Models;
 
 namespace TaterSharp.CLI;
@@ -66,6 +69,14 @@ public class StarchOneApi
 
             HttpResponseMessage response = await _client.PostAsync($"{API_HOST}/submit_blocks", content);
             string responseString = await response.Content.ReadAsStringAsync();
+
+            //var jsonLog = new JsonText(json);
+            //AnsiConsole.Write(
+            //    new Panel(jsonLog)
+            //        .Header("Block submission!")
+            //        .Collapse()
+            //        .RoundedBorder()
+            //        .BorderColor(Color.Yellow));
 
             return JsonSerializer.Deserialize<Dictionary<string, BlocksSubmissionResponse>>(responseString);
         }

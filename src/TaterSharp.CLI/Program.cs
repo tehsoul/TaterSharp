@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Spectre.Console;
 using TaterSharp.CLI.Models;
 
 namespace TaterSharp.CLI;
@@ -10,7 +11,14 @@ class Program
 
     static async Task Main()
     {
-        Console.WriteLine($"TaterSharp : mining for companies {string.Join(", ", CompanyIdsToMine)}");
+        AnsiConsole.Write(
+            new FigletText("TaterSharp")
+                .Centered()
+                .Color(System.ConsoleColor.Yellow));
+
+        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", CompanyIdsToMine)}[/]"));
+        AnsiConsole.WriteLine();
+
 
         while (true)
         {
@@ -34,7 +42,7 @@ class Program
 
     static async Task Mine(string companyId)
     {
-        Console.WriteLine($"-------------------");
+        AnsiConsole.Write(new Rule($"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]mining company {companyId}[/]"));
         var lastHashResponse = await Api.GetLastHash();
         if (lastHashResponse is null)
         {
