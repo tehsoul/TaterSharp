@@ -1,12 +1,14 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
+using Spectre.Console;
 using TaterSharp.CLI.ApiModels;
+using TaterSharp.CLI.Config;
 
 namespace TaterSharp.CLI;
 public class StarchOneApi
 {
     private readonly HttpClient _client;
-    private const string ApiHost = "https://api.starch.one";
 
     public StarchOneApi(HttpClient client)
     {
@@ -17,12 +19,12 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"{ApiHost}/teams/{companyId}/members");
+            string response = await _client.GetStringAsync($"/teams/{companyId}/members");
             return JsonSerializer.Deserialize<CompanyEmployeesResponse>(response) ?? new CompanyEmployeesResponse();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            AnsiConsole.WriteException(e);
             return new CompanyEmployeesResponse();
         }
     }
@@ -31,12 +33,12 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"{ApiHost}/blockchain/last_hash");
+            string response = await _client.GetStringAsync($"/blockchain/last_hash");
             return JsonSerializer.Deserialize<LastHashResponse>(response);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            AnsiConsole.WriteException(e);
             return null;
         }
     }
@@ -45,12 +47,12 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"{ApiHost}/blockchain/last_block");
+            string response = await _client.GetStringAsync($"/blockchain/last_block");
             return JsonSerializer.Deserialize<BlockInfoResponse>(response);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            AnsiConsole.WriteException(e);
             return null;
         }
     }
@@ -64,7 +66,7 @@ public class StarchOneApi
             var json = JsonSerializer.Serialize(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage response = await _client.PostAsync($"{ApiHost}/submit_blocks", content);
+            HttpResponseMessage response = await _client.PostAsync($"/submit_blocks", content);
             string responseString = await response.Content.ReadAsStringAsync();
 
             //var jsonLog = new JsonText(json);
@@ -79,7 +81,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            AnsiConsole.WriteException(e);
             return new Dictionary<string, BlocksSubmissionResponse>();
         }
     }

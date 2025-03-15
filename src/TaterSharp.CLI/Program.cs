@@ -1,84 +1,52 @@
-﻿using Spectre.Console;
-using TaterSharp.CLI.ApiModels;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using TaterSharp.CLI;
+using TaterSharp.CLI.Config;
 
-namespace TaterSharp.CLI;
 
-class Program
-{
-    private static readonly StarchOneApi Api = new(new HttpClient());
-    private static readonly List<string> CompanyIdsToMine = new() { "EDD336", "0CF33C" };
-    private const int SleepDelayInSeconds = 45;
+var builder = new ConfigurationBuilder();
+var configuration = builder.SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .Build();
 
-    static async Task Main()
+var host = Host.CreateDefaultBuilder()
+    .ConfigureServices((_, services) =>
     {
-        AnsiConsole.Write(
-            new FigletText("TaterSharp")
-                .Centered()
-                .Color(ConsoleColor.Yellow));
+        // Add functionality to inject IOptions<T>
+        services.AddOptions();
 
-        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", CompanyIdsToMine)}[/]"));
-        AnsiConsole.WriteLine();
+        // Add our Config object so it can be injected
+        services.Configure<AppSettings>(configuration.GetSection("appsettings"));
 
-
-        while (true)
+        services.AddHttpClient("StarchOneApi", (sp, client) =>
         {
-            foreach (var company in CompanyIdsToMine)
-            {
-                try
-                {
-                    await Mine(company);
-                }
-                catch (Exception e)
-                {
-                    AnsiConsole.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} * ERROR while mining for {company}");
-                    AnsiConsole.WriteException(e);
-                }
-            }
-            AnsiConsole.Status()
-                .Start($"Sleeping for {SleepDelayInSeconds} seconds...", _ =>
-                {
-                    Thread.Sleep(TimeSpan.FromSeconds(SleepDelayInSeconds)); // Sleep for 45 seconds
-                });
+            client.BaseAddress = new Uri(sp.GetRequiredService<IOptions<AppSettings>>().Value.ApiHost);
+        });
+
+        // specify the factory for your class 
+        services.AddTransient<StarchOneApi>(sp =>
+        {
+            var factory = sp.GetRequiredService<IHttpClientFactory>();
+            var httpClient = factory.CreateClient("StarchOneApi");
+
+            return new StarchOneApi(httpClient);
+        });
 
 
-            
-        }
-        // ReSharper disable once FunctionNeverReturns
-    }
-
-    static async Task Mine(string companyId)
+        services.AddSingleton<IApp, App>();
+        services.AddHostedService<AppService>();
+    })
+    .ConfigureLogging((_, logging) =>
     {
-        AnsiConsole.Write(new Rule($"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]mining company {companyId}[/]"));
-        var lastHashResponse = await Api.GetLastHash();
-        if (lastHashResponse is null)
-        {
-            AnsiConsole.WriteLine($"Couldn't get last hash info...");
-            return;
-        }
+        // the createdefaultbuilder registers a vanilla console logger which pollutes the CLI output --> just remove it, we handle the output we want ourselves
+        logging.ClearProviders();
+    })
+    .Build();
 
-        var companyEmployees = await Api.GetCompanyEmployees(companyId);
+await host.RunAsync();
 
-        if (companyEmployees.Members.Count == 0)
-        {
-            AnsiConsole.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} * Company {companyId} doesn't have any employees - sleeping and trying again later");
-            return;
-        }
-
-        var blocksSubmissionRequest = new BlocksSubmissionRequest();
-
-        foreach (string miner in companyEmployees.Members)
-        {
-            blocksSubmissionRequest.Blocks.Add(Solver.Solve(companyId, miner, lastHashResponse.Hash));
-        }
-
-
-        AnsiConsole.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} * Submitting blocks for {companyEmployees.Members.Count} miners in companyId {companyId}...");
-        var response = await Api.SubmitBlocks(blocksSubmissionRequest);
-
-        var groupedByBlockStatus = response.GroupBy(x => x.Value.Status);
-        foreach (var groupByBlockStatus in groupedByBlockStatus)
-        {
-            AnsiConsole.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} * {groupByBlockStatus.Count()} miners {groupByBlockStatus.Key} ({string.Join(", ", groupByBlockStatus.Select(x => x.Key))})");
-        }
-    }
-}
+Console.WriteLine($"Program ended.");
