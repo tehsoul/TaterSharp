@@ -1,29 +1,19 @@
 ﻿using Microsoft.Extensions.Options;
 using Spectre.Console;
-using TaterSharp.CLI.ApiModels;
 using TaterSharp.CLI.Config;
 using TaterSharp.CLI.Mining;
 
 namespace TaterSharp.CLI;
 
-public interface IApp
-{
-    Task Run();
-}
 public class App : IApp
 {
     private readonly IOptions<AppSettings> _appSettings;
-    private readonly StarchOneApi _api;
-    private readonly List<CompanyMiner> _companyMiners = [];
+    private readonly List<CompanyMiner> _companyMiners;
 
-    public App(IOptions<AppSettings> appSettings, StarchOneApi api)
+    public App(IEnumerable<CompanyMiner> companyMiners, IOptions<AppSettings> appSettings)
     {
+        _companyMiners = companyMiners.ToList();
         _appSettings = appSettings;
-        _api = api;
-        foreach (var companyId in appSettings.Value.CompanyIds)
-        {
-            _companyMiners.Add(CompanyMiner.Create(api, companyId));
-        }
     }
 
     public async Task Run()
@@ -56,9 +46,6 @@ public class App : IApp
                 {
                     Thread.Sleep(TimeSpan.FromSeconds(_appSettings.Value.SleepDelayInSeconds));
                 });
-
-
-
         }
         // ReSharper disable once FunctionNeverReturns
     }

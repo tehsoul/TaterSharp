@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TaterSharp.CLI;
 using TaterSharp.CLI.Config;
+using TaterSharp.CLI.Mining;
 
 
 var builder = new ConfigurationBuilder();
@@ -20,7 +21,7 @@ var host = Host.CreateDefaultBuilder()
         services.AddOptions();
 
         // Add our Config object so it can be injected
-        services.Configure<AppSettings>(configuration.GetSection("appsettings"));
+        services.Configure<AppSettings>(configuration.GetSection(AppSettings.SectionKey));
 
         services.AddHttpClient("StarchOneApi", (sp, client) =>
         {
@@ -35,6 +36,16 @@ var host = Host.CreateDefaultBuilder()
 
             return new StarchOneApi(httpClient);
         });
+
+        // register a miner for each company, we need to read the settings for this
+        var appSettings = new AppSettings();
+        configuration.GetSection(AppSettings.SectionKey).Bind(appSettings);
+        foreach (var companyId in appSettings.CompanyIds)
+        {
+            services.AddKeyedSingleton<CompanyMiner>(companyId, (sp, key) => CompanyMiner.Create(sp.GetRequiredService<StarchOneApi>(), companyId));
+            services.AddSingleton<CompanyMiner>(sp => sp.GetRequiredKeyedService<CompanyMiner>(companyId));
+        }
+
 
 
         services.AddSingleton<IApp, App>();
