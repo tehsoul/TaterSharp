@@ -3,9 +3,8 @@
 namespace TaterSharp.CLI;
 public static class Solver
 {
-    public static SingleBlockSubmission Solve(string companyId, string minerId, string lastHash)
+    public static SingleBlockSubmission Solve(string lastHash, string minerId, string color)
     {
-        var color = $"#{companyId}";
         string stringToHash = $"{lastHash} {minerId} {color}";
 
         var hash = Sha256Helper.GetSha256HexDigest(stringToHash);
