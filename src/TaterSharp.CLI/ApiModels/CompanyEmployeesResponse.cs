@@ -1,9 +1,10 @@
 ﻿using System.Text.Json.Serialization;
+using TaterSharp.CLI.Helpers;
 
 namespace TaterSharp.CLI.ApiModels;
 
 public class CompanyEmployeesResponse
 {
     [JsonPropertyName("members")] 
-    public List<string> Members { get; set; } = [];
+    public OrdinalIgnoreCaseHashSet Members { get; set; } = [];
 }
