@@ -8,6 +8,7 @@ public class CompanyMiner
     private readonly StarchOneApi _api;
     private OrdinalIgnoreCaseHashSet _employees = [];
     private long _lastKnownBlock = 0;
+    private int _mineCounter = 0;
 
     public OrdinalIgnoreCaseHashSet Employees => _employees;
 
@@ -31,15 +32,9 @@ public class CompanyMiner
         _employees = companyEmployees.Members;
     }
 
-    public async Task Mine()
+    public async Task Mine(BlockInfoResponse lastBlockInfo)
     {
-        AnsiConsole.Write(new Rule($"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]mining company {CompanyId}[/]"));
-        var lastBlockInfo = await _api.GetLastBlock();
-        if (lastBlockInfo is null)
-        {
-            AnsiConsole.WriteLine($"Couldn't get last hash info...");
-            return;
-        }
+        AnsiConsole.Write(new Rule($"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]Company: {CompanyId} ({_mineCounter} blocks this session)[/]"));
 
         await UpdateEmployees();
 
@@ -79,10 +74,24 @@ public class CompanyMiner
                         .Color(ConsoleColor.Green));
 
                 AnsiConsole.Write(new Rule($"[green]Congratulations {lastBlockInfo.MinerId}[/]"));
+                _mineCounter++;
             }
 
             _lastKnownBlock = lastBlockInfo.BlockId;
         }
 
+    }
+
+    public async Task Mine()
+    {
+        AnsiConsole.Write(new Rule($"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]mining company {CompanyId}[/]"));
+        var lastBlockInfo = await _api.GetLastBlock();
+        if (lastBlockInfo is null)
+        {
+            AnsiConsole.WriteLine($"Couldn't get last hash info...");
+            return;
+        }
+
+        await Mine(lastBlockInfo);
     }
 }

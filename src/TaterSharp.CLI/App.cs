@@ -9,11 +9,13 @@ public class App : IApp
 {
     private readonly IOptions<AppSettings> _appSettings;
     private readonly List<CompanyMiner> _companyMiners;
+    private readonly StarchOneApi _api;
 
-    public App(IEnumerable<CompanyMiner> companyMiners, IOptions<AppSettings> appSettings)
+    public App(IEnumerable<CompanyMiner> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api)
     {
         _companyMiners = companyMiners.ToList();
         _appSettings = appSettings;
+        _api = api;
     }
 
     public async Task Run()
@@ -23,24 +25,30 @@ public class App : IApp
                 .Centered()
                 .Color(ConsoleColor.Yellow));
 
-        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", _companyMiners.Select(x=>x.CompanyId))}[/]"));
+        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", _companyMiners.Select(x => x.CompanyId))}[/]"));
         AnsiConsole.WriteLine();
 
 
         while (true)
         {
-            foreach (var companyMiner in _companyMiners)
+            try
             {
-                try
+                var lastBlockInfo = await _api.GetLastBlock();
+                if (lastBlockInfo is null)
                 {
-                    await companyMiner.Mine();
+                    continue;
                 }
-                catch (Exception e)
+
+                foreach (var companyMiner in _companyMiners)
                 {
-                    AnsiConsole.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} * ERROR while mining for {companyMiner.CompanyId}");
-                    AnsiConsole.WriteException(e);
+                    await companyMiner.Mine(lastBlockInfo);
                 }
             }
+            catch (Exception e)
+            {
+                AnsiConsole.WriteException(e);
+            }
+
             AnsiConsole.Status()
                 .Start($"Sleeping for {_appSettings.Value.SleepDelayInSeconds} seconds...", _ =>
                 {
