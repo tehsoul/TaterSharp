@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace TaterSharp.CLI;
+namespace TaterSharp.CompanyMiner;
 
 public class AppService : BackgroundService
 {

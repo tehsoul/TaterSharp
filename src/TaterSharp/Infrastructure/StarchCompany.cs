@@ -4,7 +4,7 @@ using TaterSharp.Common.Helpers;
 
 namespace TaterSharp.Infrastructure;
 
-public class CompanyMiner
+public class StarchCompany
 {
     private readonly StarchOneApi _api;
     private OrdinalIgnoreCaseHashSet _employees = [];
@@ -13,14 +13,14 @@ public class CompanyMiner
 
     public OrdinalIgnoreCaseHashSet Employees => _employees;
 
-    public static CompanyMiner Create(StarchOneApi api, string companyId)
+    public static StarchCompany Create(StarchOneApi api, string companyId)
     {
-        return new CompanyMiner(api, companyId);
+        return new StarchCompany(api, companyId);
     }
 
     public string CompanyId { get; private set; }
     public string Color { get; private set; }
-    private CompanyMiner(StarchOneApi api, string companyId)
+    private StarchCompany(StarchOneApi api, string companyId)
     {
         _api = api;
         CompanyId = companyId;

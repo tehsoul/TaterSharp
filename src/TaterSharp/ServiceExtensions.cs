@@ -35,8 +35,8 @@ public static class ServiceExtensions
         configuration.GetSection(AppSettings.SectionKey).Bind(appSettings);
         foreach (var companyId in appSettings.CompanyIds)
         {
-            services.AddKeyedSingleton<CompanyMiner>(companyId, (sp, key) => CompanyMiner.Create(sp.GetRequiredService<StarchOneApi>(), companyId));
-            services.AddSingleton<CompanyMiner>(sp => sp.GetRequiredKeyedService<CompanyMiner>(companyId));
+            services.AddKeyedSingleton<StarchCompany>(companyId, (sp, key) => StarchCompany.Create(sp.GetRequiredService<StarchOneApi>(), companyId));
+            services.AddSingleton<StarchCompany>(sp => sp.GetRequiredKeyedService<StarchCompany>(companyId));
         }
         return services;
     }

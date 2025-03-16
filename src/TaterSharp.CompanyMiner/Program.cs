@@ -2,11 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using TaterSharp;
-using TaterSharp.CLI;
-using TaterSharp.Config;
-using TaterSharp.Infrastructure;
+using TaterSharp.CompanyMiner;
 
 
 var builder = new ConfigurationBuilder();

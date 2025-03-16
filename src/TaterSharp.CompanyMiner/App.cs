@@ -3,15 +3,15 @@ using Spectre.Console;
 using TaterSharp.Config;
 using TaterSharp.Infrastructure;
 
-namespace TaterSharp.CLI;
+namespace TaterSharp.CompanyMiner;
 
 public class App : IApp
 {
     private readonly IOptions<AppSettings> _appSettings;
-    private readonly List<CompanyMiner> _companyMiners;
+    private readonly List<StarchCompany> _companyMiners;
     private readonly StarchOneApi _api;
 
-    public App(IEnumerable<CompanyMiner> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api)
+    public App(IEnumerable<StarchCompany> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api)
     {
         _companyMiners = companyMiners.ToList();
         _appSettings = appSettings;

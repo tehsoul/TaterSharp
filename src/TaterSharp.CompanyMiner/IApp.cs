@@ -1,4 +1,4 @@
-﻿namespace TaterSharp.CLI;
+﻿namespace TaterSharp.CompanyMiner;
 
 public interface IApp
 {
