@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using TaterSharp.CLI.Helpers;
+using TaterSharp.Common.Helpers;
 
-namespace TaterSharp.CLI.Config;
+namespace TaterSharp.Config;
 public class AppSettings
 {
     public const string SectionKey = "appsettings";

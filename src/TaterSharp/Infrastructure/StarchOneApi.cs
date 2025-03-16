@@ -1,12 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
 using Spectre.Console;
 using Spectre.Console.Json;
-using TaterSharp.CLI.ApiModels;
-using TaterSharp.CLI.Config;
+using TaterSharp.Common.ApiModels;
 
-namespace TaterSharp.CLI;
+namespace TaterSharp.Infrastructure;
 public class StarchOneApi
 {
     private readonly HttpClient _client;

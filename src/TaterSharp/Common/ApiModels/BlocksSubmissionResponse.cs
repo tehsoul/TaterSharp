@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaterSharp.CLI.ApiModels
+namespace TaterSharp.Common.ApiModels
 {
     public class BlocksSubmissionResponse
     {

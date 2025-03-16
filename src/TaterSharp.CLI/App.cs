@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Spectre.Console;
-using TaterSharp.CLI.Config;
-using TaterSharp.CLI.Mining;
+using TaterSharp.Config;
+using TaterSharp.Infrastructure;
 
 namespace TaterSharp.CLI;
 

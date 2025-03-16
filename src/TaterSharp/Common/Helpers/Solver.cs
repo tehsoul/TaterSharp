@@ -1,6 +1,6 @@
-﻿using TaterSharp.CLI.ApiModels;
+﻿using TaterSharp.Common.ApiModels;
 
-namespace TaterSharp.CLI;
+namespace TaterSharp.Common.Helpers;
 public static class Solver
 {
     public static SingleBlockSubmission Solve(string lastHash, string minerId, string color)

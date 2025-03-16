@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace TaterSharp.CLI;
+namespace TaterSharp.Common.Helpers;
 public static class Sha256Helper
 {
     public static string GetSha256HexDigest(string stringToHash)

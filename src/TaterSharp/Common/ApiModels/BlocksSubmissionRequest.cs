@@ -1,13 +1,13 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TaterSharp.CLI.ApiModels;
+namespace TaterSharp.Common.ApiModels;
 public class BlocksSubmissionRequest
 {
     [JsonPropertyName("blocks")] 
     public List<SingleBlockSubmission> Blocks { get; set; } = [];
 }
 
-public partial class SingleBlockSubmission
+public class SingleBlockSubmission
 {
     [JsonPropertyName("hash")]
     public string Hash { get; set; } = string.Empty;

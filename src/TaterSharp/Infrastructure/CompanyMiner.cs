@@ -1,8 +1,9 @@
 ﻿using Spectre.Console;
-using TaterSharp.CLI.ApiModels;
-using TaterSharp.CLI.Helpers;
+using TaterSharp.Common.ApiModels;
+using TaterSharp.Common.Helpers;
 
-namespace TaterSharp.CLI.Mining;
+namespace TaterSharp.Infrastructure;
+
 public class CompanyMiner
 {
     private readonly StarchOneApi _api;
