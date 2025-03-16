@@ -37,7 +37,7 @@ public class StarchCompany
         _employees = companyEmployees.Members;
     }
 
-    public async Task Mine(BlockInfoResponse lastBlockInfo)
+    public async Task Mine(LastBlockInfoResponse lastLastBlockInfo)
     {
         AnsiConsole.Write(new Rule($"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]Company: {CompanyId} ({_mineCounter} blocks this session)[/]"));
 
@@ -53,7 +53,7 @@ public class StarchCompany
 
         foreach (string employedMiner in Employees)
         {
-            blocksSubmissionRequest.Blocks.Add(Solver.Solve(lastBlockInfo.Hash, employedMiner, Color));
+            blocksSubmissionRequest.Blocks.Add(Solver.Solve(lastLastBlockInfo.Hash, employedMiner, Color));
         }
 
 
@@ -67,22 +67,22 @@ public class StarchCompany
         }
 
         // check if last block was mined by one of ours!
-        if (!lastBlockInfo.BlockId.Equals(_lastKnownBlock))
+        if (!lastLastBlockInfo.BlockId.Equals(_lastKnownBlock))
         {
-            if (Employees.Contains(lastBlockInfo.MinerId))
+            if (Employees.Contains(lastLastBlockInfo.MinerId))
             {
                 AnsiConsole.Write(new Rule($"[green]Yay! a miner of company {CompanyId} mined a block![/]"));
                 // hooray
                 AnsiConsole.Write(
-                    new FigletText(lastBlockInfo.MinerId)
+                    new FigletText(lastLastBlockInfo.MinerId)
                         .Centered()
                         .Color(ConsoleColor.Green));
 
-                AnsiConsole.Write(new Rule($"[green]Congratulations {lastBlockInfo.MinerId}[/]"));
+                AnsiConsole.Write(new Rule($"[green]Congratulations {lastLastBlockInfo.MinerId}[/]"));
                 _mineCounter++;
             }
 
-            _lastKnownBlock = lastBlockInfo.BlockId;
+            _lastKnownBlock = lastLastBlockInfo.BlockId;
         }
 
     }

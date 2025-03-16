@@ -11,13 +11,8 @@ public class AppService : BackgroundService
         this._app = app;
     }
 
-    public override async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await _app.Run();
-    }
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
     }
 }

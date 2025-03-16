@@ -49,12 +49,31 @@ public class StarchOneApi
             return null;
         }
     }
-
-    public async Task<BlockInfoResponse?> GetLastBlock()
+    
+    public async Task<LastBlockInfoResponse?> GetLastBlock()
     {
         try
         {
             string responseString = await _client.GetStringAsync($"/blockchain/last_block");
+
+            if (!TryDeserialize<LastBlockInfoResponse>(responseString, out var deserialized))
+            {
+                return null;
+            }
+            return deserialized!;
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.WriteException(e);
+            return null;
+        }
+    }
+
+    public async Task<BlockInfoResponse?> GetBlockInfo(long blockId)
+    {
+        try
+        {
+            string responseString = await _client.GetStringAsync($"/blockchain/id/{blockId}");
 
             if (!TryDeserialize<BlockInfoResponse>(responseString, out var deserialized))
             {
