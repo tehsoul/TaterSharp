@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Spectre.Console;
+using Spectre.Console.Json;
 using TaterSharp.CLI.ApiModels;
 using TaterSharp.CLI.Config;
 
@@ -19,8 +20,12 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"/teams/{companyId}/members");
-            return JsonSerializer.Deserialize<CompanyEmployeesResponse>(response) ?? new CompanyEmployeesResponse();
+            string responseString = await _client.GetStringAsync($"/teams/{companyId}/members");
+            if (!TryDeserialize<CompanyEmployeesResponse>(responseString, out var deserialized))
+            {
+                return new CompanyEmployeesResponse();
+            }
+            return deserialized!;
         }
         catch (Exception e)
         {
@@ -33,8 +38,12 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"/blockchain/last_hash");
-            return JsonSerializer.Deserialize<LastHashResponse>(response);
+            string responseString = await _client.GetStringAsync($"/blockchain/last_hash");
+            if (!TryDeserialize<LastHashResponse>(responseString, out var deserialized))
+            {
+                return null;
+            }
+            return deserialized!;
         }
         catch (Exception e)
         {
@@ -47,8 +56,13 @@ public class StarchOneApi
     {
         try
         {
-            string response = await _client.GetStringAsync($"/blockchain/last_block");
-            return JsonSerializer.Deserialize<BlockInfoResponse>(response);
+            string responseString = await _client.GetStringAsync($"/blockchain/last_block");
+
+            if (!TryDeserialize<BlockInfoResponse>(responseString, out var deserialized))
+            {
+                return null;
+            }
+            return deserialized!;
         }
         catch (Exception e)
         {
@@ -69,20 +83,49 @@ public class StarchOneApi
             HttpResponseMessage response = await _client.PostAsync($"/submit_blocks", content);
             string responseString = await response.Content.ReadAsStringAsync();
 
-            //var jsonLog = new JsonText(json);
-            //AnsiConsole.Write(
-            //    new Panel(jsonLog)
-            //        .Header("Block submission!")
-            //        .Collapse()
-            //        .RoundedBorder()
-            //        .BorderColor(Color.Yellow));
+            if (!TryDeserialize<Dictionary<string, BlocksSubmissionResponse>>(responseString, out var deserialized))
+            {
+                return new Dictionary<string, BlocksSubmissionResponse>();
+            }
 
-            return JsonSerializer.Deserialize<Dictionary<string, BlocksSubmissionResponse>>(responseString) ?? new Dictionary<string, BlocksSubmissionResponse>();
+            return deserialized!;
+
         }
         catch (Exception e)
         {
             AnsiConsole.WriteException(e);
             return new Dictionary<string, BlocksSubmissionResponse>();
+        }
+    }
+
+    public bool TryDeserialize<T>(string json, out T? deserialized)
+    {
+        if (string.IsNullOrEmpty(json))
+        {
+            deserialized = default(T);
+            return false;
+        }
+            
+        try
+        {
+            deserialized = JsonSerializer.Deserialize<T>(json);
+            return true;
+        }
+        catch (JsonException jsonException)
+        {
+            AnsiConsole.Write($"Error deserializing json:");
+            AnsiConsole.WriteException(jsonException);
+            try
+            {
+                AnsiConsole.Write(new JsonText(json));
+            }
+            catch
+            {
+                // ignored
+            }
+
+            deserialized = default(T);
+            return false;
         }
     }
 }
