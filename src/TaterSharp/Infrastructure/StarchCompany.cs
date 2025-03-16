@@ -1,6 +1,7 @@
 ﻿using Spectre.Console;
 using TaterSharp.Common.ApiModels;
 using TaterSharp.Common.Helpers;
+using TaterSharp.Config;
 
 namespace TaterSharp.Infrastructure;
 
@@ -13,18 +14,21 @@ public class StarchCompany
 
     public OrdinalIgnoreCaseHashSet Employees => _employees;
 
-    public static StarchCompany Create(StarchOneApi api, string companyId)
+    public static StarchCompany Create(StarchOneApi api, CompanyConfiguration companyConfiguration)
     {
-        return new StarchCompany(api, companyId);
+        return new StarchCompany(api, companyConfiguration);
     }
 
     public string CompanyId { get; private set; }
     public string Color { get; private set; }
-    private StarchCompany(StarchOneApi api, string companyId)
+    public bool ConfiguredToBeMined { get; private set; }
+
+    private StarchCompany(StarchOneApi api, CompanyConfiguration companyConfiguration)
     {
         _api = api;
-        CompanyId = companyId;
-        Color = $"#{companyId}";
+        CompanyId = companyConfiguration.CompanyId;
+        ConfiguredToBeMined = companyConfiguration.Mine;
+        Color = $"#{companyConfiguration.CompanyId}";
     }
 
     public async Task UpdateEmployees()

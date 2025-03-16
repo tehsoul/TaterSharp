@@ -6,12 +6,12 @@ public class AppSettings
 {
     public const string SectionKey = "appsettings";
 
-    [JsonPropertyName("companyIds")] 
-    public OrdinalIgnoreCaseHashSet CompanyIds { get; set; } = [];
+    [JsonPropertyName("companies")] 
+    public List<CompanyConfiguration> Companies { get; set; } = [];
 
     [JsonPropertyName("apiHost")]
     public string ApiHost { get; set; } = "https://api.starch.one";
 
     [JsonPropertyName("sleepDelayInSeconds")]
-    public int SleepDelayInSeconds { get; set; } = 30;
+    public int SleepDelayInSeconds { get; set; } = 60;
 }

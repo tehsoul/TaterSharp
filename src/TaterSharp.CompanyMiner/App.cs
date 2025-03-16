@@ -25,7 +25,7 @@ public class App : IApp
                 .Centered()
                 .Color(ConsoleColor.Yellow));
 
-        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", _companyMiners.Select(x => x.CompanyId))}[/]"));
+        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", _companyMiners.Where(x => x.ConfiguredToBeMined).Select(x => x.CompanyId))}[/]"));
         AnsiConsole.WriteLine();
 
 
@@ -39,7 +39,7 @@ public class App : IApp
                     continue;
                 }
 
-                foreach (var companyMiner in _companyMiners)
+                foreach (var companyMiner in _companyMiners.Where(x => x.ConfiguredToBeMined))
                 {
                     await companyMiner.Mine(lastBlockInfo);
                 }

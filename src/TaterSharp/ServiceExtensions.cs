@@ -33,10 +33,15 @@ public static class ServiceExtensions
         // register a miner for each company, we need to read the settings for this
         var appSettings = new AppSettings();
         configuration.GetSection(AppSettings.SectionKey).Bind(appSettings);
-        foreach (var companyId in appSettings.CompanyIds)
+        foreach (var companyConfiguration in appSettings.Companies)
         {
-            services.AddKeyedSingleton<StarchCompany>(companyId, (sp, key) => StarchCompany.Create(sp.GetRequiredService<StarchOneApi>(), companyId));
-            services.AddSingleton<StarchCompany>(sp => sp.GetRequiredKeyedService<StarchCompany>(companyId));
+            if (string.IsNullOrEmpty(companyConfiguration.CompanyId))
+            {
+                continue;
+            }
+
+            services.AddKeyedSingleton<StarchCompany>(companyConfiguration.CompanyId, (sp, key) => StarchCompany.Create(sp.GetRequiredService<StarchOneApi>(), companyConfiguration));
+            services.AddSingleton<StarchCompany>(sp => sp.GetRequiredKeyedService<StarchCompany>(companyConfiguration.CompanyId));
         }
         return services;
     }
