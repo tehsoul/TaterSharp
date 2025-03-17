@@ -31,7 +31,25 @@ public class StarchOneApi
             return new CompanyEmployeesResponse();
         }
     }
-   
+
+    public async Task<PendingBlocksResponse?> GetPendingBlocks()
+    {
+        try
+        {
+            string responseString = await _client.GetStringAsync($"/pending_blocks");
+            if (!TryDeserialize<PendingBlocksResponse>(responseString, out var deserialized))
+            {
+                return null;
+            }
+            return deserialized!;
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.WriteException(e);
+            return null;
+        }
+    }
+
     public async Task<LastHashResponse?> GetLastHash()
     {
         try
@@ -76,6 +94,25 @@ public class StarchOneApi
             string responseString = await _client.GetStringAsync($"/blockchain/id/{blockId}");
 
             if (!TryDeserialize<BlockInfoResponse>(responseString, out var deserialized))
+            {
+                return null;
+            }
+            return deserialized!;
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.WriteException(e);
+            return null;
+        }
+    }
+
+    public async Task<SystemTimeResponse?> GetSystemTime()
+    {
+        try
+        {
+            string responseString = await _client.GetStringAsync($"/system_time");
+
+            if (!TryDeserialize<SystemTimeResponse>(responseString, out var deserialized))
             {
                 return null;
             }
