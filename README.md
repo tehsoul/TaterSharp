@@ -5,7 +5,7 @@ Extra features compared to PyTaterMini:
 - possibility to mine for multiple companies at once
 - pretty output
 
-taking $STARCH donations at $tehsoul
+taking $STRCH donations at $tehsoul
 
 ![screenshot of initial version](docs/img/screenshot.png)
 
