@@ -10,7 +10,6 @@ public class ConsoleOutput : IApplicationOutput
     {
         text = includeTimestamp ? $"[dim white]{DateTime.Now:yyyy-MM-dd HH:mm:ss}[/] [green]{text}[/]" : $"[green]{text}[/]";
         AnsiConsole.Write(new Rule(text));
-
     }
 
     public void WriteLine(string text, bool includeTimestamp = true)

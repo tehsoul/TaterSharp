@@ -4,16 +4,10 @@ using TaterSharp.Application;
 using TaterSharp.Common.ApiModels;
 
 namespace TaterSharp.Infrastructure;
-public class StarchOneApi
+public class StarchOneApi(HttpClient client, IApplicationOutput output)
 {
-    private readonly HttpClient _client;
-    private readonly IApplicationOutput _output;
-
-    public StarchOneApi(HttpClient client, IApplicationOutput output)
-    {
-        this._client = client;
-        _output = output;
-    }
+    private readonly HttpClient _client = client;
+    private readonly IApplicationOutput _output = output;
 
     public async Task<CompanyEmployeesResponse> GetCompanyEmployees(string companyId)
     {
@@ -22,14 +16,14 @@ public class StarchOneApi
             string responseString = await _client.GetStringAsync($"/teams/{companyId}/members");
             if (!TryDeserialize<CompanyEmployeesResponse>(responseString, out var deserialized))
             {
-                return new CompanyEmployeesResponse();
+                return new();
             }
             return deserialized!;
         }
         catch (Exception e)
         {
             _output.WriteException(e);
-            return new CompanyEmployeesResponse();
+            return new();
         }
     }
 
@@ -140,7 +134,7 @@ public class StarchOneApi
 
             if (!TryDeserialize<Dictionary<string, BlocksSubmissionResponse>>(responseString, out var deserialized))
             {
-                return new Dictionary<string, BlocksSubmissionResponse>();
+                return [];
             }
 
             return deserialized!;
@@ -149,7 +143,7 @@ public class StarchOneApi
         catch (Exception e)
         {
             _output.WriteException(e);
-            return new Dictionary<string, BlocksSubmissionResponse>();
+            return [];
         }
     }
 
@@ -157,7 +151,7 @@ public class StarchOneApi
     {
         if (string.IsNullOrEmpty(json))
         {
-            deserialized = default(T);
+            deserialized = default;
             return false;
         }
             
@@ -171,7 +165,7 @@ public class StarchOneApi
             _output.WriteDeserializationException(json, jsonException);
             
 
-            deserialized = default(T);
+            deserialized = default;
             return false;
         }
     }
