@@ -1,17 +1,18 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Spectre.Console;
-using Spectre.Console.Json;
+using TaterSharp.Application;
 using TaterSharp.Common.ApiModels;
 
 namespace TaterSharp.Infrastructure;
 public class StarchOneApi
 {
     private readonly HttpClient _client;
+    private readonly IApplicationOutput _output;
 
-    public StarchOneApi(HttpClient client)
+    public StarchOneApi(HttpClient client, IApplicationOutput output)
     {
         this._client = client;
+        _output = output;
     }
 
     public async Task<CompanyEmployeesResponse> GetCompanyEmployees(string companyId)
@@ -27,7 +28,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return new CompanyEmployeesResponse();
         }
     }
@@ -45,7 +46,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return null;
         }
     }
@@ -63,7 +64,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return null;
         }
     }
@@ -82,7 +83,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return null;
         }
     }
@@ -101,7 +102,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return null;
         }
     }
@@ -120,7 +121,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return null;
         }
     }
@@ -147,7 +148,7 @@ public class StarchOneApi
         }
         catch (Exception e)
         {
-            AnsiConsole.WriteException(e);
+            _output.WriteException(e);
             return new Dictionary<string, BlocksSubmissionResponse>();
         }
     }
@@ -167,16 +168,8 @@ public class StarchOneApi
         }
         catch (JsonException jsonException)
         {
-            AnsiConsole.Write($"Error deserializing json:");
-            AnsiConsole.WriteException(jsonException);
-            try
-            {
-                AnsiConsole.Write(new JsonText(json));
-            }
-            catch
-            {
-                // ignored
-            }
+            _output.WriteDeserializationException(json, jsonException);
+            
 
             deserialized = default(T);
             return false;

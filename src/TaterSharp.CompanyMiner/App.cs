@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Spectre.Console;
+using TaterSharp.Application;
 using TaterSharp.Config;
 using TaterSharp.Infrastructure;
 
@@ -10,24 +11,19 @@ public class App : IApp
     private readonly IOptions<AppSettings> _appSettings;
     private readonly List<StarchCompany> _companyMiners;
     private readonly StarchOneApi _api;
+    private readonly IApplicationOutput _output;
 
-    public App(IEnumerable<StarchCompany> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api)
+    public App(IEnumerable<StarchCompany> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api, IApplicationOutput output)
     {
         _companyMiners = companyMiners.ToList();
         _appSettings = appSettings;
         _api = api;
+        _output = output;
     }
 
     public async Task Run()
     {
-        AnsiConsole.Write(
-            new FigletText("TaterSharp")
-                .Centered()
-                .Color(ConsoleColor.Yellow));
-
-        AnsiConsole.Write(new Rule($"[green]mining for companies {string.Join(", ", _companyMiners.Where(x => x.ConfiguredToBeMined).Select(x => x.CompanyId))}[/]"));
-        AnsiConsole.WriteLine();
-
+        _output.WriteApplicationStartup($"mining for companies {string.Join(", ", _companyMiners.Where(x => x.ConfiguredToBeMined).Select(x => x.CompanyId))}");
 
         while (true)
         {
@@ -46,7 +42,7 @@ public class App : IApp
             }
             catch (Exception e)
             {
-                AnsiConsole.WriteException(e);
+                _output.WriteException(e);
             }
 
             AnsiConsole.Status()

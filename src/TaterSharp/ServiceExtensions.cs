@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using TaterSharp.Application;
 using TaterSharp.Config;
 using TaterSharp.Infrastructure;
+using TaterSharp.Output;
 
 namespace TaterSharp;
 
@@ -16,6 +18,8 @@ public static class ServiceExtensions
         // Add our Config object so it can be injected
         services.Configure<AppSettings>(configuration.GetSection(AppSettings.SectionKey));
 
+        services.AddSingleton<IApplicationOutput, ConsoleOutput>();
+
         services.AddHttpClient("StarchOneApi", (sp, client) =>
         {
             client.BaseAddress = new Uri(sp.GetRequiredService<IOptions<AppSettings>>().Value.ApiHost);
@@ -27,7 +31,7 @@ public static class ServiceExtensions
             var factory = sp.GetRequiredService<IHttpClientFactory>();
             var httpClient = factory.CreateClient("StarchOneApi");
 
-            return new StarchOneApi(httpClient);
+            return new StarchOneApi(httpClient, sp.GetRequiredService<IApplicationOutput>());
         });
 
         // register a miner for each company, we need to read the settings for this
@@ -40,7 +44,7 @@ public static class ServiceExtensions
                 continue;
             }
 
-            services.AddKeyedSingleton<StarchCompany>(companyConfiguration.CompanyId, (sp, key) => StarchCompany.Create(sp.GetRequiredService<StarchOneApi>(), companyConfiguration));
+            services.AddKeyedSingleton<StarchCompany>(companyConfiguration.CompanyId, (sp, key) => StarchCompany.Create(sp.GetRequiredService<StarchOneApi>(), companyConfiguration, sp.GetRequiredService<IApplicationOutput>()));
             services.AddSingleton<StarchCompany>(sp => sp.GetRequiredKeyedService<StarchCompany>(companyConfiguration.CompanyId));
         }
         return services;
