@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.ComponentModel.Design;
+using System.Text;
 using System.Text.Json;
 using TaterSharp.Application;
 using TaterSharp.Common.ApiModels;
@@ -9,117 +10,53 @@ public class StarchOneApi(HttpClient client, IApplicationOutput output)
     private readonly HttpClient _client = client;
     private readonly IApplicationOutput _output = output;
 
-    public async Task<CompanyEmployeesResponse> GetCompanyEmployees(string companyId)
+    private async Task<T?> GetStringAsAsync<T>(string requestUrl) where T : class
     {
         try
         {
-            string responseString = await _client.GetStringAsync($"/teams/{companyId}/members");
-            if (!TryDeserialize<CompanyEmployeesResponse>(responseString, out var deserialized))
+            string responseString = await _client.GetStringAsync(requestUrl);
+            if (!TryDeserialize<T>(responseString, out var deserialized))
             {
-                return new();
+                return null;
             }
             return deserialized!;
         }
         catch (Exception e)
         {
             _output.WriteException(e);
-            return new();
+            return null;
         }
+    }
+
+    public async Task<CompanyEmployeesResponse?> GetCompanyEmployees(string companyId)
+    {
+        return await GetStringAsAsync<CompanyEmployeesResponse>($"/teams/{companyId}/members");
     }
 
     public async Task<PendingBlocksResponse?> GetPendingBlocks()
     {
-        try
-        {
-            string responseString = await _client.GetStringAsync($"/pending_blocks");
-            if (!TryDeserialize<PendingBlocksResponse>(responseString, out var deserialized))
-            {
-                return null;
-            }
-            return deserialized!;
-        }
-        catch (Exception e)
-        {
-            _output.WriteException(e);
-            return null;
-        }
+        return await GetStringAsAsync<PendingBlocksResponse>($"/pending_blocks");
     }
 
     public async Task<LastHashResponse?> GetLastHash()
     {
-        try
-        {
-            string responseString = await _client.GetStringAsync($"/blockchain/last_hash");
-            if (!TryDeserialize<LastHashResponse>(responseString, out var deserialized))
-            {
-                return null;
-            }
-            return deserialized!;
-        }
-        catch (Exception e)
-        {
-            _output.WriteException(e);
-            return null;
-        }
+        return await GetStringAsAsync<LastHashResponse>($"/blockchain/last_hash");
     }
     
     public async Task<LastBlockInfoResponse?> GetLastBlock()
     {
-        try
-        {
-            string responseString = await _client.GetStringAsync($"/blockchain/last_block");
-
-            if (!TryDeserialize<LastBlockInfoResponse>(responseString, out var deserialized))
-            {
-                return null;
-            }
-            return deserialized!;
-        }
-        catch (Exception e)
-        {
-            _output.WriteException(e);
-            return null;
-        }
+        return await GetStringAsAsync<LastBlockInfoResponse>($"/blockchain/last_block");
     }
 
     public async Task<BlockInfoResponse?> GetBlockInfo(long blockId)
     {
-        try
-        {
-            string responseString = await _client.GetStringAsync($"/blockchain/id/{blockId}");
-
-            if (!TryDeserialize<BlockInfoResponse>(responseString, out var deserialized))
-            {
-                return null;
-            }
-            return deserialized!;
-        }
-        catch (Exception e)
-        {
-            _output.WriteException(e);
-            return null;
-        }
+        return await GetStringAsAsync<BlockInfoResponse>($"/blockchain/id/{blockId}");
     }
 
     public async Task<SystemTimeResponse?> GetSystemTime()
     {
-        try
-        {
-            string responseString = await _client.GetStringAsync($"/system_time");
-
-            if (!TryDeserialize<SystemTimeResponse>(responseString, out var deserialized))
-            {
-                return null;
-            }
-            return deserialized!;
-        }
-        catch (Exception e)
-        {
-            _output.WriteException(e);
-            return null;
-        }
+        return await GetStringAsAsync<SystemTimeResponse>($"/system_time");
     }
-
 
 
     public async Task<Dictionary<string, BlocksSubmissionResponse>> SubmitBlocks(BlocksSubmissionRequest request)

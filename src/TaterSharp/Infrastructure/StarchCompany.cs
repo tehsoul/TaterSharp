@@ -36,7 +36,7 @@ public class StarchCompany
     public async Task UpdateEmployees()
     {
         var companyEmployees = await _api.GetCompanyEmployees(CompanyId);
-        _employees = companyEmployees.Members;
+        _employees = companyEmployees?.Members ?? [];
     }
 
     public async Task Mine(LastBlockInfoResponse lastBlockInfo)
