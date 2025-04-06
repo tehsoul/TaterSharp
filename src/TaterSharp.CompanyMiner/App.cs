@@ -6,12 +6,20 @@ using TaterSharp.Infrastructure;
 
 namespace TaterSharp.CompanyMiner;
 
-public class App(IEnumerable<StarchCompany> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api, IApplicationOutput output) : IApp
+public class App : IApp
 {
-    private readonly IOptions<AppSettings> _appSettings = appSettings;
-    private readonly List<StarchCompany> _companyMiners = companyMiners.ToList();
-    private readonly StarchOneApi _api = api;
-    private readonly IApplicationOutput _output = output;
+    private readonly List<StarchCompany> _companyMiners;
+    private readonly IOptions<AppSettings> _appSettings;
+    private readonly StarchOneApi _api;
+    private readonly IApplicationOutput _output;
+
+    public App(IEnumerable<StarchCompany> companyMiners, IOptions<AppSettings> appSettings, StarchOneApi api, IApplicationOutput output)
+    {
+        _appSettings = appSettings;
+        _api = api;
+        _output = output;
+        _companyMiners = companyMiners.ToList();
+    }
 
     public async Task Run()
     {
