@@ -23,7 +23,10 @@ public class App : IApp
 
     public async Task Run()
     {
-        _output.WriteApplicationStartup($"mining for companies {string.Join(", ", _companyMiners.Where(x => x.ConfiguredToBeMined).Select(x => x.CompanyId))}");
+        var companyInfo =
+            $"mining for companies {string.Join(", ", _companyMiners.Where(x => x.ConfiguredToBeMined).Select(x => x.CompanyId))}";
+        var apiInfo = $"using api: {_appSettings.Value.ApiHost}";
+        _output.WriteApplicationStartup(companyInfo, apiInfo);
 
         while (true)
         {

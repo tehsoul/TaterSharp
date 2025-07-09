@@ -11,7 +11,7 @@ public interface IApplicationOutput
     void WriteHeader(string text, bool includeTimestamp = true);
     void WriteLine(string text, bool includeTimestamp = true);
     void WriteMinedBlockCelebration(string companyId, string minerId);
-    void WriteApplicationStartup(string information);
+    void WriteApplicationStartup(string companyInfo, string apiInfo);
     void WriteException(Exception exception);
     void WriteDeserializationException(string json, JsonException jsonException);
 }

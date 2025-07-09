@@ -30,14 +30,15 @@ public class ConsoleOutput : IApplicationOutput
         AnsiConsole.Write(new Rule($"[green]Congratulations {minerId}[/]"));
     }
 
-    public void WriteApplicationStartup(string information)
+    public void WriteApplicationStartup(string companyInfo, string apiInfo)
     {
         AnsiConsole.Write(
             new FigletText("TaterSharp")
                 .Centered()
                 .Color(ConsoleColor.Yellow));
 
-        AnsiConsole.Write(new Rule($"[green]{information}[/]"));
+        AnsiConsole.Write(new Rule($"[green]{companyInfo}[/]"));
+        AnsiConsole.Write(new Rule($"[green]{apiInfo}[/]"));
         AnsiConsole.WriteLine();
     }
 
